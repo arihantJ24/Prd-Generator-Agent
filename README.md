@@ -28,7 +28,7 @@ This repository contains an automated n8n workflow that reads project informatio
 
 ## 📷 Workflow Diagram
 
-![Workflow Diagram](assets/prd_generator_workflow.png)
+![Workflow Diagram](assets/untitled.png)
 
 ---
 
