@@ -28,7 +28,7 @@ This repository contains an automated n8n workflow that reads project informatio
 
 ## 📷 Workflow Diagram
 
-![Workflow Diagram](assests/untitled.png)
+<img width="919" height="465" alt="Untitled" src="https://github.com/user-attachments/assets/5accb2fa-96f9-400d-8ef7-225ffe858ae2" />
 
 ---
 
