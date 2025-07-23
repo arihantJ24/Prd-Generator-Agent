@@ -1,0 +1,459 @@
+{
+  "name": "PRD editor and Generator",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        460
+      ],
+      "id": "327e7965-f001-4c7f-87c5-766a4260c1bd",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "efdf4afa-e5ac-4d55-92e4-b5be0864f257",
+      "name": "Split In Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 2,
+      "position": [
+        -60,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "__REPLACE_WITH_YOUR_SHEET_ID__",
+          "mode": "list",
+          "cachedResultName": "ExpenseAgent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1n-z25sFq9Ec3z6CjASFP4RsXbpRTAznDq-0he_5zlvU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1932193874,
+          "mode": "list",
+          "cachedResultName": "Expense",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1n-z25sFq9Ec3z6CjASFP4RsXbpRTAznDq-0he_5zlvU/edit#gid=1932193874"
+        },
+        "combineFilters": "AND",
+        "options": {}
+      },
+      "id": "99fc6c76-907d-47e1-8b59-a3ab41ca71e6",
+      "name": "Read Sheet Rows1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        -260,
+        460
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "__REPLACE_WITH_YOUR_CREDENTIAL_ID__",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert product manager. Your task is to write a detailed Product Requirements Document (PRD) by filling out the template below.\n\nUse the data provided from the spreadsheet for the fields with data. For any fields where no direct data is provided (like 'Core Logic' or 'Error Handling'), use your professional expertise to generate the appropriate content based on the information you have.\n\nThe final output must be in well-formatted Markdown.\n\n**--- DATA FROM SPREADSHEET ---**\n- **Agent Name:** {{ $('Split In Batches').item.json.agentName }}\n- **Description:** {{ $('Split In Batches').item.json.description }}\n- **Problem Statement:** {{ $('Split In Batches').item.json.whyNeeded }}\n- **Target Users:** {{ $('Split In Batches').item.json.targetUsers }}\n- **Trigger Mechanism:** {{ $('Split In Batches').item.json.triggerMechanism }}\n- **Tools in Use:** {{ $('Split In Batches').item.json.toolsInUse }}\n\n**--- PRD TEMPLATE (FILL THIS OUT) ---**\n\n# PRD: {{ $('Split In Batches').item.json.agentName }}\n\n## Agent Name\n**{{ $('Split In Batches').item.json.agentName }}**\n\n## Description\n{{ $('Split In Batches').item.json.description }}\n\n## Why It’s Needed\n* **Problem statement:** {{ $('Split In Batches').item.json.whyNeeded }}\n* **Target users:** {{ $('Split In Batches').item.json.targetUsers }}\n* **Business value or pain point it solves:** (Generate this based on the problem statement and description.)\n\n## Trigger Mechanism\n{{ $('Split In Batches').item.json.triggerMechanism }}\n\n## Tools in Use\n{{ $('Split In Batches').item.json.toolsInUse }}\n\n## Inputs\n* **Expected inputs (including format and source):** (Generate this based on the agent's function.)\n* **Validations or rules for each field:** (Suggest potential validation rules.)\n* **Sample input data:** (Create a sample input based on the description.)\n\n## Prompt Design\n* **Prompt Template:** (Propose a potential prompt template for this agent.)\n* **Input Variables:** (List the variables that would be used in the prompt.)\n* **Expected Output Style:** Markdown\n* **Prompt Version History:** v1.0\n\n## Outputs\n* **Output schema or structure:** (Describe the likely output format, e.g., JSON with fields like 'status' and 'data'.)\n* **Who consumes the output:** (Suggest who would use this output, e.g., another agent, a dashboard, etc.)\n\n## Core Logic / Workflow\n(Generate a detailed, step-by-step breakdown of how this agent would likely function from trigger to output.)\n\n## Data & Integrations\n* **Databases used (read/write):** (Suggest potential data sources or destinations.)\n* **APIs or tools connected:** {{ $('Split In Batches').item.json.toolsInUse }}\n* **Required access/permissions:** (List required permissions based on tools.)\n\n## Error Handling & Fallbacks\n* **How the agent handles exceptions or failures:** (Describe a basic error handling strategy.)\n* **Logging, alerts, retry logic:** (Suggest a logging and alert mechanism.)\n* **Manual fallback path:** (Describe a manual fallback.)\n\n## References / Supporting Docs\n* **LLM config:** Gemini 1.5 Flash, Temperature: 0.7",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        360,
+        20
+      ],
+      "id": "7b4e96df-8d39-44ff-9d84-21c91931b450",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.8
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "22ffa4f8-9bec-497d-9c6d-c6179837b65c",
+      "name": "Google Gemini Chat Model",
+      "notesInFlow": false,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "M77rzk2Lrjf5srUL",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "folderId": "__REPLACE_WITH_YOUR_FOLDER_ID__",
+        "title": "={{ $('Split In Batches').item.json.agentName }} - PRD"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        80,
+        860
+      ],
+      "id": "2d27fe16-4dd0-4626-96c1-87eaf514fa67",
+      "name": "Create a document",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "CmImYc4nzBO9h0ZJ",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Create a document').item.json.id }}\n",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $('Formatter Agent').item.json.text }}\n\n"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        340,
+        860
+      ],
+      "id": "393ca24d-5b68-43f8-a5d0-8c72b964c6a1",
+      "name": "Update a document",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "CmImYc4nzBO9h0ZJ",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ \n  \"You are a formatting assistant. Your job is to clean and reformat a PRD document so it's ready to be inserted into a Google Doc.\\n\\n\" +\n  \"### Instructions:\\n\" +\n  \"- DO NOT return markdown like #, ##, **, or *\\n\" +\n  \"- Instead, WRITE the headings in ALL CAPS\\n\" +\n  \"- Add empty lines between sections\\n\" +\n  \"- Use dashes - or bullet points (•) for lists\\n\" +\n  \"- Keep it very readable with good spacing\\n\" +\n  \"- Remove all \\\\n, code blocks, or special symbols\\n\\n\" +\n  \"### INPUT:\\n\" +\n  $('Basic LLM Chain').item.json.text + \"\\n\\n\" +\n  \"### OUTPUT:\\n\" +\n  \"Return the final formatted PRD as clean plain text with clear section titles, readable layout, and spacing. Do NOT wrap in triple backticks.\"\n}}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        800,
+        520
+      ],
+      "id": "57d174fe-4a2e-4aa0-8e5f-53a31f2e4c4c",
+      "name": "Formatter Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        800,
+        80
+      ],
+      "id": "c6c05584-2288-48ba-85d3-5f310f2b438f",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "__REPLACE__",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f1df567e-0e36-4600-baf0-f01d12d304e8",
+              "leftValue": "={{ $json.description }}",
+              "rightValue": "=blank",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        80,
+        280
+      ],
+      "id": "c67a0c06-73e6-445d-93c5-dde022066587",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Fill the sheet first"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        300,
+        300
+      ],
+      "id": "359c89d3-c7fd-4205-aedc-392d6336e158",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\"You are a technical product analyst. Your task is to read a full PRD and extract detailed information about each tool listed under 'Tools in Use'.\\n\\n### Instructions:\\n1. Look at the PRD provided below.\\n2. Find the section 'Tools in Use'.\\n3. For each tool mentioned, generate:\\n   - **Use in context**: Explain how this tool is used in this agent.\\n   - **Input it receives**: Data or payload format it consumes.\\n   - **Output it gives**: What it returns or produces.\\n4. Format all tool details in this layout:\\n\\n---\\n\\n**TOOL NAME: <name>**\\n- **USE:** <summary>\\n- **INPUTS:** <inputs>\\n- **OUTPUTS:** <outputs>\\n\\n---\\n\\n### PRD Content:\\n\" + $('Formatter Agent').item.json.text\n",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1160,
+        520
+      ],
+      "id": "46c2ced6-ff5b-49a7-bd0b-e73c7ad22d6a",
+      "name": "Tool Analyzer Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        740
+      ],
+      "id": "96a1498d-c278-4882-bdb3-cb51543ed26d",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "M77rzk2Lrjf5srUL",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Create a document').item.json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $('Tool Analyzer Agent').item.json.text }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        600,
+        860
+      ],
+      "id": "9639c58e-5697-41f0-b8e0-9e5a4f353174",
+      "name": "Update a document1",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "CmImYc4nzBO9h0ZJ",
+          "name": "Google Docs account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Read Sheet Rows1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Sheet Rows1": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Formatter Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a document": {
+      "main": [
+        [
+          {
+            "node": "Update a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document": {
+      "main": [
+        [
+          {
+            "node": "Update a document1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatter Agent": {
+      "main": [
+        [
+          {
+            "node": "Tool Analyzer Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Formatter Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool Analyzer Agent": {
+      "main": [
+        [
+          {
+            "node": "Create a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Tool Analyzer Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document1": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ea973308-d0d4-4c3b-b004-41f5c6afb6bb",
+  "meta": {
+    "instanceId": "1530fc66b8c944587cc6647d3523c01976164f883e7b205be5caf94fdc53da5e"
+  },
+  "id": "VZJU1WCHAkVcoth0",
+  "tags": []
+}
